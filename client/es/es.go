@@ -2,9 +2,9 @@ package es
 
 import (
 	"context"
+	"fmt"
 	"github.com/dbielecki97/bookstore-utils-go/logger"
 	"github.com/olivere/elastic"
-	"time"
 )
 
 var (
@@ -13,7 +13,7 @@ var (
 
 type esClient interface {
 	setClient(*elastic.Client)
-	Index(interface{}) (*elastic.IndexResponse, error)
+	Index(string, string, interface{}) (*elastic.IndexResponse, error)
 }
 
 type defaultEsClient struct {
@@ -24,7 +24,7 @@ func Init() {
 	l := logger.GetLogger()
 	client, err := elastic.NewClient(
 		elastic.SetURL("http://127.0.0.1:9200"),
-		elastic.SetHealthcheckInterval(10*time.Second),
+		elastic.SetHealthcheck(false),
 		elastic.SetSniff(false),
 		elastic.SetErrorLog(l),
 		elastic.SetInfoLog(l),
@@ -46,6 +46,14 @@ func (c *defaultEsClient) setClient(client *elastic.Client) {
 	c.c = client
 }
 
-func (c defaultEsClient) Index(i interface{}) (*elastic.IndexResponse, error) {
-	return c.c.Index().BodyJson(i).Do(context.Background())
+func (c defaultEsClient) Index(index string, docType string, doc interface{}) (*elastic.IndexResponse, error) {
+	result, err := c.c.Index().
+		Type(docType).
+		Index(index).
+		BodyJson(doc).
+		Do(context.Background())
+	if err != nil {
+		logger.Error(fmt.Sprintf("error when trying to index document in elastic in index %s", index), err)
+	}
+	return result, err
 }

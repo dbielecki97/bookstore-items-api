@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/dbielecki97/bookstore-items-api/domain"
+	"github.com/dbielecki97/bookstore-items-api/domain/item"
 	"net/http"
 )
 import "github.com/dbielecki97/bookstore-utils-go/errs"
@@ -11,17 +11,21 @@ var (
 )
 
 type itemService interface {
-	Create(domain.Item) (*domain.Item, *errs.RestErr)
-	Get(string) (*domain.Item, *errs.RestErr)
+	Create(item.Dto) (*item.Dto, *errs.RestErr)
+	Get(string) (*item.Dto, *errs.RestErr)
 }
 
 type defaultItemService struct {
 }
 
-func (s defaultItemService) Create(i domain.Item) (*domain.Item, *errs.RestErr) {
-	return nil, errs.NewRestErr("implement me", http.StatusNotImplemented, "not_implemented", nil)
+func (s defaultItemService) Create(dto item.Dto) (*item.Dto, *errs.RestErr) {
+	if err := dto.Save(); err != nil {
+		return nil, err
+	}
+
+	return &dto, nil
 }
 
-func (s defaultItemService) Get(id string) (*domain.Item, *errs.RestErr) {
+func (s defaultItemService) Get(id string) (*item.Dto, *errs.RestErr) {
 	return nil, errs.NewRestErr("implement me", http.StatusNotImplemented, "not_implemented", nil)
 }

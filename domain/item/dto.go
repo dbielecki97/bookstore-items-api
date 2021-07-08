@@ -1,6 +1,6 @@
-package domain
+package item
 
-type Item struct {
+type Dto struct {
 	ID                string      `json:"id,omitempty"`
 	Seller            int64       `json:"seller,omitempty"`
 	Title             string      `json:"title,omitempty"`
