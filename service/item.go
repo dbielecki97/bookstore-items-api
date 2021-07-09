@@ -11,14 +11,14 @@ var (
 )
 
 type itemService interface {
-	Create(item.Dto) (*item.Dto, *errs.RestErr)
-	Get(string) (*item.Dto, *errs.RestErr)
+	Create(item.Dto) (*item.Dto, errs.RestErr)
+	Get(string) (*item.Dto, errs.RestErr)
 }
 
 type defaultItemService struct {
 }
 
-func (s defaultItemService) Create(dto item.Dto) (*item.Dto, *errs.RestErr) {
+func (s defaultItemService) Create(dto item.Dto) (*item.Dto, errs.RestErr) {
 	if err := dto.Save(); err != nil {
 		return nil, err
 	}
@@ -26,6 +26,6 @@ func (s defaultItemService) Create(dto item.Dto) (*item.Dto, *errs.RestErr) {
 	return &dto, nil
 }
 
-func (s defaultItemService) Get(id string) (*item.Dto, *errs.RestErr) {
+func (s defaultItemService) Get(id string) (*item.Dto, errs.RestErr) {
 	return nil, errs.NewRestErr("implement me", http.StatusNotImplemented, "not_implemented", nil)
 }

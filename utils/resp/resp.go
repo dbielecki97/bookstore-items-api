@@ -16,6 +16,6 @@ func JSON(w http.ResponseWriter, statusCode int, body interface{}) {
 	}
 }
 
-func Error(w http.ResponseWriter, err *errs.RestErr) {
-	JSON(w, err.StatusCode, err)
+func Error(w http.ResponseWriter, err errs.RestErr) {
+	JSON(w, err.StatusCode(), err)
 }

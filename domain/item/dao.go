@@ -11,7 +11,7 @@ const (
 	TypeItems  = "item"
 )
 
-func (d *Dto) Save() *errs.RestErr {
+func (d *Dto) Save() errs.RestErr {
 	result, err := es.Client.Index(indexItems, TypeItems, d)
 	if err != nil {
 		return errs.NewInternalServerErr("could not save in elastic", errors.New("database error"))
