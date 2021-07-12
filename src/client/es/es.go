@@ -45,6 +45,7 @@ func Init() {
 	}
 
 	Client.setClient(client)
+	logger.Info("Successfully initialized ElasticSearch client.")
 }
 
 func (c *defaultEsClient) setClient(client *elastic.Client) {

@@ -2,8 +2,8 @@ package item
 
 import (
 	"encoding/json"
-	"github.com/dbielecki97/bookstore-items-api/client/es"
-	"github.com/dbielecki97/bookstore-items-api/domain/query"
+	es2 "github.com/dbielecki97/bookstore-items-api/src/client/es"
+	query2 "github.com/dbielecki97/bookstore-items-api/src/domain/query"
 	"github.com/dbielecki97/bookstore-utils-go/errs"
 )
 
@@ -12,7 +12,7 @@ const (
 )
 
 func (d *Dto) Save() errs.RestErr {
-	result, err := es.Client.Index(indexItems, d)
+	result, err := es2.Client.Index(indexItems, d)
 	if err != nil {
 		return err
 	}
@@ -22,7 +22,7 @@ func (d *Dto) Save() errs.RestErr {
 }
 
 func (d *Dto) Get() errs.RestErr {
-	result, restErr := es.Client.Get(indexItems, d.ID)
+	result, restErr := es2.Client.Get(indexItems, d.ID)
 	if restErr != nil {
 		return restErr
 	}
@@ -35,8 +35,8 @@ func (d *Dto) Get() errs.RestErr {
 	return nil
 }
 
-func (d *Dto) Search(q query.EsQuery) ([]Dto, errs.RestErr) {
-	searchResult, restErr := es.Client.Search(indexItems, q.Build())
+func (d *Dto) Search(q query2.EsQuery) ([]Dto, errs.RestErr) {
+	searchResult, restErr := es2.Client.Search(indexItems, q.Build())
 	if restErr != nil {
 		return nil, restErr
 	}
@@ -56,7 +56,7 @@ func (d *Dto) Search(q query.EsQuery) ([]Dto, errs.RestErr) {
 }
 
 func (d *Dto) Update() errs.RestErr {
-	_, restErr := es.Client.Update(indexItems, d.ID, d)
+	_, restErr := es2.Client.Update(indexItems, d.ID, d)
 	if restErr != nil {
 		return restErr
 	}
@@ -65,5 +65,5 @@ func (d *Dto) Update() errs.RestErr {
 }
 
 func (d *Dto) Delete() errs.RestErr {
-	return es.Client.Delete(indexItems, d.ID)
+	return es2.Client.Delete(indexItems, d.ID)
 }

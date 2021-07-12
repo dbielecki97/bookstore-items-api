@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/dbielecki97/bookstore-items-api/client/es"
+	"github.com/dbielecki97/bookstore-items-api/src/client/es"
 	"github.com/dbielecki97/bookstore-utils-go/logger"
 	"github.com/gorilla/mux"
 	"net/http"

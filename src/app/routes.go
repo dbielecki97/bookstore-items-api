@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/dbielecki97/bookstore-items-api/controller"
+	"github.com/dbielecki97/bookstore-items-api/src/controller"
 	"net/http"
 )
 

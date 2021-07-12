@@ -2,10 +2,10 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/dbielecki97/bookstore-items-api/domain/item"
-	"github.com/dbielecki97/bookstore-items-api/domain/query"
-	"github.com/dbielecki97/bookstore-items-api/service"
-	"github.com/dbielecki97/bookstore-items-api/utils/resp"
+	item2 "github.com/dbielecki97/bookstore-items-api/src/domain/item"
+	query2 "github.com/dbielecki97/bookstore-items-api/src/domain/query"
+	service2 "github.com/dbielecki97/bookstore-items-api/src/service"
+	resp2 "github.com/dbielecki97/bookstore-items-api/src/utils/resp"
 	"github.com/dbielecki97/bookstore-oauth-go/oauth"
 	"github.com/dbielecki97/bookstore-utils-go/errs"
 	"github.com/gorilla/mux"
@@ -29,115 +29,115 @@ type defaultItemController struct {
 
 func (c *defaultItemController) Create(w http.ResponseWriter, r *http.Request) {
 	if restErr := oauth.AuthenticateRequest(r); restErr != nil {
-		resp.Error(w, restErr)
+		resp2.Error(w, restErr)
 		return
 	}
 
 	if oauth.GetCallerId(r) == 0 {
-		resp.Error(w, errs.NewAuthenticationErr("unable to retrieve caller id from token"))
+		resp2.Error(w, errs.NewAuthenticationErr("unable to retrieve caller id from token"))
 		return
 	}
 
-	var ir item.Dto
+	var ir item2.Dto
 	err := json.NewDecoder(r.Body).Decode(&ir)
 	if err != nil {
-		resp.Error(w, errs.NewBadRequestErr("invalid request body"))
+		resp2.Error(w, errs.NewBadRequestErr("invalid request body"))
 		return
 	}
 	defer r.Body.Close()
 
 	ir.Seller = oauth.GetCallerId(r)
 
-	ic, restErr := service.ItemService.Create(ir)
+	ic, restErr := service2.ItemService.Create(ir)
 	if restErr != nil {
-		resp.Error(w, restErr)
+		resp2.Error(w, restErr)
 		return
 	}
 
-	resp.JSON(w, http.StatusCreated, ic)
+	resp2.JSON(w, http.StatusCreated, ic)
 }
 
 func (c *defaultItemController) Get(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	itemId := vars["item_id"]
-	it, err := service.ItemService.Get(itemId)
+	it, err := service2.ItemService.Get(itemId)
 	if err != nil {
-		resp.Error(w, err)
+		resp2.Error(w, err)
 		return
 	}
 
-	resp.JSON(w, http.StatusOK, it)
+	resp2.JSON(w, http.StatusOK, it)
 }
 
 func (c *defaultItemController) Search(w http.ResponseWriter, r *http.Request) {
-	var q query.EsQuery
+	var q query2.EsQuery
 	err := json.NewDecoder(r.Body).Decode(&q)
 	if err != nil {
-		resp.Error(w, errs.NewBadRequestErr("invalid json body"))
+		resp2.Error(w, errs.NewBadRequestErr("invalid json body"))
 		return
 	}
 	defer r.Body.Close()
 
-	results, restErr := service.ItemService.Search(q)
+	results, restErr := service2.ItemService.Search(q)
 	if restErr != nil {
-		resp.Error(w, restErr)
+		resp2.Error(w, restErr)
 		return
 	}
 
-	resp.JSON(w, http.StatusOK, results)
+	resp2.JSON(w, http.StatusOK, results)
 }
 
 func (c *defaultItemController) Update(w http.ResponseWriter, r *http.Request) {
 	if restErr := oauth.AuthenticateRequest(r); restErr != nil {
-		resp.Error(w, restErr)
+		resp2.Error(w, restErr)
 		return
 	}
 
 	if oauth.GetCallerId(r) == 0 {
-		resp.Error(w, errs.NewAuthenticationErr("unable to retrieve caller id from token"))
+		resp2.Error(w, errs.NewAuthenticationErr("unable to retrieve caller id from token"))
 		return
 	}
 
 	vars := mux.Vars(r)
 	itemId := vars["item_id"]
 
-	var ir item.Dto
+	var ir item2.Dto
 	err := json.NewDecoder(r.Body).Decode(&ir)
 	if err != nil {
-		resp.Error(w, errs.NewBadRequestErr("invalid request body"))
+		resp2.Error(w, errs.NewBadRequestErr("invalid request body"))
 		return
 	}
 	defer r.Body.Close()
 
 	ir.ID = itemId
 
-	ui, restErr := service.ItemService.Update(ir)
+	ui, restErr := service2.ItemService.Update(ir)
 	if restErr != nil {
-		resp.Error(w, restErr)
+		resp2.Error(w, restErr)
 		return
 	}
 
-	resp.JSON(w, http.StatusOK, ui)
+	resp2.JSON(w, http.StatusOK, ui)
 }
 
 func (c defaultItemController) Delete(w http.ResponseWriter, r *http.Request) {
 	if restErr := oauth.AuthenticateRequest(r); restErr != nil {
-		resp.Error(w, restErr)
+		resp2.Error(w, restErr)
 		return
 	}
 
 	if oauth.GetCallerId(r) == 0 {
-		resp.Error(w, errs.NewAuthenticationErr("unable to retrieve caller id from token"))
+		resp2.Error(w, errs.NewAuthenticationErr("unable to retrieve caller id from token"))
 		return
 	}
 
 	vars := mux.Vars(r)
 	itemId := vars["item_id"]
-	err := service.ItemService.Delete(itemId)
+	err := service2.ItemService.Delete(itemId)
 	if err != nil {
-		resp.Error(w, err)
+		resp2.Error(w, err)
 		return
 	}
 
-	resp.JSON(w, http.StatusNoContent, nil)
+	resp2.JSON(w, http.StatusNoContent, nil)
 }
