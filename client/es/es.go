@@ -6,7 +6,6 @@ import (
 	"github.com/dbielecki97/bookstore-utils-go/errs"
 	"github.com/dbielecki97/bookstore-utils-go/logger"
 	"github.com/olivere/elastic/v7"
-	"net/http"
 )
 
 var (
@@ -19,6 +18,7 @@ type esClient interface {
 	Get(string, string) (*elastic.GetResult, errs.RestErr)
 	Search(string, elastic.Query) (*elastic.SearchResult, errs.RestErr)
 	Update(string, string, interface{}) (*elastic.UpdateResponse, errs.RestErr)
+	Delete(string, string) errs.RestErr
 }
 
 type defaultEsClient struct {
@@ -109,6 +109,16 @@ func (c *defaultEsClient) Update(index string, id string, doc interface{}) (*ela
 	return result, nil
 }
 
-func (c *defaultEsClient) Delete(index string, id string) (*elastic.UpdateResponse, errs.RestErr) {
-	return nil, errs.NewRestErr("not implemented", http.StatusNotImplemented, "not_implemented", nil)
+func (c *defaultEsClient) Delete(index string, id string) errs.RestErr {
+	_, err := c.c.Delete().Index(index).Id(id).Do(context.Background())
+	if err != nil {
+		if elastic.IsNotFound(err) {
+			return errs.NewNotFoundErr(fmt.Sprintf("not found document at index %s with id %s", index, id))
+		}
+
+		logger.Error(fmt.Sprintf("error when trying to delete document at index %s with id %s", index, id), err)
+		return errs.NewInternalServerErr("error when trying to delete document", errs.NewError("database error"))
+	}
+
+	return nil
 }

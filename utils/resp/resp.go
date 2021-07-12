@@ -10,9 +10,13 @@ import (
 func JSON(w http.ResponseWriter, statusCode int, body interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	encodeErr := json.NewEncoder(w).Encode(body)
-	if encodeErr != nil {
-		logger.Error("could not encode", encodeErr)
+	switch statusCode {
+	case http.StatusNoContent:
+	default:
+		encodeErr := json.NewEncoder(w).Encode(body)
+		if encodeErr != nil {
+			logger.Error("could not encode", encodeErr)
+		}
 	}
 }
 

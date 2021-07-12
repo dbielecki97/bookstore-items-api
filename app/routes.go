@@ -11,4 +11,5 @@ func createUrlMappings() {
 	router.HandleFunc("/items/{item_id}", controller.ItemController.Update).Methods(http.MethodPut)
 	router.HandleFunc("/ping", controller.PingController.Ping).Methods(http.MethodGet)
 	router.HandleFunc("/items/search", controller.ItemController.Search).Methods(http.MethodPost)
+	router.HandleFunc("/items/{item_id}", controller.ItemController.Delete).Methods(http.MethodDelete)
 }

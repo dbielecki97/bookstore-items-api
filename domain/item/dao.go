@@ -63,3 +63,7 @@ func (d *Dto) Update() errs.RestErr {
 
 	return nil
 }
+
+func (d *Dto) Delete() errs.RestErr {
+	return es.Client.Delete(indexItems, d.ID)
+}

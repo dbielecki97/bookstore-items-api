@@ -21,6 +21,7 @@ type itemController interface {
 	Get(http.ResponseWriter, *http.Request)
 	Search(http.ResponseWriter, *http.Request)
 	Update(http.ResponseWriter, *http.Request)
+	Delete(w http.ResponseWriter, r *http.Request)
 }
 
 type defaultItemController struct {
@@ -117,4 +118,26 @@ func (c *defaultItemController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp.JSON(w, http.StatusOK, ui)
+}
+
+func (c defaultItemController) Delete(w http.ResponseWriter, r *http.Request) {
+	if restErr := oauth.AuthenticateRequest(r); restErr != nil {
+		resp.Error(w, restErr)
+		return
+	}
+
+	if oauth.GetCallerId(r) == 0 {
+		resp.Error(w, errs.NewAuthenticationErr("unable to retrieve caller id from token"))
+		return
+	}
+
+	vars := mux.Vars(r)
+	itemId := vars["item_id"]
+	err := service.ItemService.Delete(itemId)
+	if err != nil {
+		resp.Error(w, err)
+		return
+	}
+
+	resp.JSON(w, http.StatusNoContent, nil)
 }
